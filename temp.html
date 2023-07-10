@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Movie Suggestions and Ratings</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container mt-4">
+		<h1>Movie Suggestions and Ratings</h1>
+		<div id="loginForm">
+			<form>
+				<div class="form-group">
+					<label for="username">Enter your username:</label>
+					<input type="text" class="form-control" id="username">
+				</div>
+				<button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+			</form>
+		</div>
+		<div id="movieSuggestions" style="display:none">
+			<h2>Suggested Movies</h2>
+			<div id="moviesList"></div>
+			<hr>
+			<div class="form-group">
+				<label for="movieTitle">Suggest a movie:</label>
+				<input type="text" class="form-control" id="movieTitle">
+			</div>
+			<button type="submit" class="btn btn-primary" id="suggestBtn">Suggest</button>
+			<button type="button" class="btn btn-secondary" id="logoutBtn">Logout</button>
+		</div>
+	</div>
+
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<!-- Custom JS -->
+	<script src="temp.js"></script>
+</body>
+</html>

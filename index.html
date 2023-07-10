@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Movie Suggestions and Ratings</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<style>
+/* Custom CSS */
+body {
+    background-color: #f8f9fa;
+}
+
+h1, h2, h3, p, label {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.container {
+    max-width: 800px;
+}
+
+#movieSuggestions {
+    display: none;
+}
+
+.movie {
+    margin-bottom: 20px;
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.poster {
+    max-width: 200px;
+    max-height: 300px;
+    margin-right: 20px;
+    float: left;
+}
+
+.title {
+    font-size: 24px;
+    margin-top: 0;
+}
+
+.summary {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.ratingInput {
+    width: 100px;
+    margin-right: 10px;
+}
+
+.rating {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.commentForm {
+    margin-top: 10px;
+}
+
+.commentInput {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.commentsList {
+    list-style: none;
+    margin-top: 10px;
+    padding-left: 0;
+}
+
+.comment {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 5px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: none;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #aaa;
+}
+
+.form-control::-moz-placeholder {
+    color: #aaa;
+}
+
+.form-control:-ms-input-placeholder {
+    color: #aaa;
+}
+
+.form-control::placeholder {
+    color: #aaa;
+}
+
+/* Three-dot icon */
+.movie .dots {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #aaa;
+    transition: color 0.2s;
+}
+
+.movie:hover .dots {
+    color: #333;
+}
+
+.dots:focus {
+    outline: none;
+}
+
+.dots:before {
+    content: "\22EF";
+}
+
+.dots:hover:before {
+    color: #333;
+}
+
+.dots:before:focus {
+    outline: none;
+}
+</style>
+<body>
+	<div class="container mt-4">
+		<h1>Movie Suggestions and Ratings</h1>
+		<div id="loginForm">
+			<form>
+				<div class="form-group">
+					<label for="username">Enter your username:</label>
+					<input type="text" class="form-control" id="username">
+				</div>
+				<button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+			</form>
+		</div>
+		<div id="movieSuggestions" style="display:none">
+			<h2>Suggested Movies</h2>
+			<div id="moviesList"></div>
+			<hr>
+			<div class="form-group">
+				<label for="movieTitle">Suggest a movie:</label>
+				<input type="text" class="form-control" id="movieTitle">
+			</div>
+			<button type="submit" class="btn btn-primary" id="suggestBtn">Suggest</button>
+			<button type="button" class="btn btn-secondary" id="logoutBtn">Logout</button>
+		</div>
+		
+		<!-- Three-dot icon -->
+		<span class="dots">&#x22EF;</span>
+
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<!-- Custom JS -->
+	<script src="index.js"></script>
+</body>
+</html>
