@@ -222,3 +222,58 @@ $(document).ready(function () {
       });
   }
 });
+
+
+// Code to handle sign-in with phone number
+function signInWithPhoneNumber(phoneNumber) {
+  var phoneNumber = "+1" + phoneNumber; // Modify this according to your phone number format
+  var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+
+  firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+    .then(function (confirmationResult) {
+      var verificationCode = window.prompt('Please enter the verification code that was sent to your phone:');
+      return confirmationResult.confirm(verificationCode);
+    })
+    .then(function (result) {
+      // User signed in successfully with phone number
+      var user = result.user;
+      // Do something with the signed-in user
+    })
+    .catch(function (error) {
+      // Handle sign-in errors
+      console.error("Error signing in with phone number: ", error);
+    });
+}
+
+// Code to handle sign-in with Google (Gmail) account
+function signInWithGoogle() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+
+  firebase.auth().signInWithPopup(provider)
+    .then(function (result) {
+      // User signed in successfully with Google account
+      var user = result.user;
+      // Do something with the signed-in user
+    })
+    .catch(function (error) {
+      // Handle sign-in errors
+      console.error("Error signing in with Google account: ", error);
+    });
+}
+
+
+
+// Code to handle phone sign-in button click
+$("#phoneSignInBtn").click(function (event) {
+  event.preventDefault();
+  var phoneNumber = $("#phoneNumberInput").val();
+  if (phoneNumber) {
+    signInWithPhoneNumber(phoneNumber);
+  }
+});
+
+// Code to handle Google sign-in button click
+$("#googleSignInBtn").click(function (event) {
+  event.preventDefault();
+  signInWithGoogle();
+});

@@ -6,6 +6,12 @@
 	<title>Movie Suggestions and Ratings</title>
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<!-- Add other Firebase SDKs if needed -->
 	<script type="module">
 		// Import the functions you need from the SDKs you need
 		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
@@ -176,19 +182,72 @@
 		.dots:hover {
 			color: #333;
 		}
+        /* CSS code for sign-in form */
+#phoneSignInForm,
+#googleSignInForm {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  text-align: center;
+}
+
+#phoneSignInForm h2,
+#googleSignInForm h2 {
+  margin-top: 0;
+}
+
+#phoneSignInForm input,
+#googleSignInForm button {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#phoneSignInForm button,
+#googleSignInForm button {
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+#phoneSignInForm button:hover,
+#googleSignInForm button:hover {
+  background-color: #45a049;
+}
+
+/* CSS code for error messages */
+#errorMessage {
+  color: red;
+  margin-top: 10px;
+}
+
 	</style>
 </head>
 <body>
 	<div class="container mt-4">
 		<h1>Movie Suggestions and Ratings</h1>
 		<div id="loginForm">
-			<form>
-				<div class="form-group">
-					<label for="username">Enter your username:</label>
-					<input type="text" class="form-control" id="username" required>
-				</div>
-				<button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
-			</form>
+			<!-- HTML code for sign-in form -->
+<div id="phoneSignInForm">
+    <h2>Sign In with Phone Number</h2>
+    <div id="recaptcha-container"></div>
+    <input type="text" id="phoneNumberInput" placeholder="Enter your phone number">
+    <button id="phoneSignInBtn">Sign In</button>
+  </div>
+  
+  <div id="googleSignInForm">
+    <h2>Sign In with Google</h2>
+    <button id="googleSignInBtn">Sign In with Google</button>
+  </div>
+  
+  <!-- HTML code for error messages -->
+  <div id="errorMessage"></div>
+  
 		</div>
 		<div id="movieSuggestions" style="display:none">
 			<h2>Suggested Movies</h2>
