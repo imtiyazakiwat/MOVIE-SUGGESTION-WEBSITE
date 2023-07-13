@@ -1,10 +1,22 @@
 $(document).ready(function () {
-  // Firebase Firestore database reference
-  var firestore = firebase.firestore();
-  var moviesCollection = firestore.collection('movies');
+  // Initialize Firebase
+  var firebaseConfig = {
+    apiKey: "AIzaSyDncXawcMTUeRGfBlE7knbDUdJWnx8jIFI",
+  authDomain: "movie-suggestion-ff465.firebaseapp.com",
+  databaseURL: "https://movie-suggestion-ff465-default-rtdb.firebaseio.com",
+  projectId: "movie-suggestion-ff465",
+  storageBucket: "movie-suggestion-ff465.appspot.com",
+  messagingSenderId: "171432738",
+  appId: "1:171432738:web:1712655a2e27c2a8b2a37b",
+  measurementId: "G-LVHKDCEGXQ"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  // Get a reference to the Firebase Realtime Database
+  var database = firebase.database();
 
   // Code to check if the user has logged in before
-  let loggedInUser = localStorage.getItem("loggedInUser");
+  var loggedInUser = localStorage.getItem("loggedInUser");
   if (loggedInUser) {
     $("#loginForm").hide();
     $("#movieSuggestions").show();
@@ -14,7 +26,7 @@ $(document).ready(function () {
   // Code to handle the Login form submission
   $("#loginBtn").click(function (event) {
     event.preventDefault();
-    let username = $("#username").val();
+    var username = $("#username").val();
     if (username) {
       localStorage.setItem("loggedInUser", username);
       $("#loginForm").hide();
@@ -34,9 +46,9 @@ $(document).ready(function () {
   // Code to handle the Suggest button click
   $("#suggestBtn").click(function (event) {
     event.preventDefault();
-    let title = $("#movieTitle").val();
-    let rating = 5;
-    let user = localStorage.getItem("loggedInUser");
+    var title = $("#movieTitle").val();
+    var rating = 5;
+    var user = localStorage.getItem("loggedInUser");
     if (title) {
       saveMovie(title, rating, user);
       $("#movieTitle").val("");
@@ -46,37 +58,31 @@ $(document).ready(function () {
 
   // Code to handle the movie title auto-suggest
   $("#movieTitle").on("input", function () {
-    let input = $(this).val().trim().toLowerCase();
+    var input = $(this).val().trim().toLowerCase();
     if (input === "") {
       $("#suggestionsList").empty();
       return;
     }
-    let suggestions = getMovieSuggestions(input);
+    var suggestions = getMovieSuggestions(input);
     displayMovieSuggestions(suggestions);
   });
 
   function getMovieSuggestions(input) {
-    let movies = [];
-    moviesCollection.get()
-      .then(function (querySnapshot) {
-        querySnapshot.forEach(function (doc) {
-          let movie = doc.data();
-          if (movie.title.toLowerCase().includes(input)) {
-            movies.push(movie.title);
-          }
-        });
-      })
-      .catch(function (error) {
-        console.error("Error retrieving movie suggestions: ", error);
+    var movies = [];
+    database.ref("movies").orderByChild("title").startAt(input).endAt(input + "\uf8ff").once("value").then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        var movie = childSnapshot.val();
+        movies.push(movie.title);
       });
+    });
     return movies;
   }
 
   function displayMovieSuggestions(suggestions) {
-    let suggestionsList = $("#suggestionsList");
+    var suggestionsList = $("#suggestionsList");
     suggestionsList.empty();
-    for (let i = 0; i < suggestions.length; i++) {
-      let suggestion = $("<li>")
+    for (var i = 0; i < suggestions.length; i++) {
+      var suggestion = $("<li>")
         .addClass("suggestion")
         .text(suggestions[i]);
       suggestionsList.append(suggestion);
@@ -84,196 +90,152 @@ $(document).ready(function () {
   }
 
   $(document).on("click", ".suggestion", function () {
-    let suggestion = $(this).text();
+    var suggestion = $(this).text();
     $("#movieTitle").val(suggestion);
     $("#suggestionsList").empty();
   });
 
   // Code to fetch suggested movies from the database and display them on the website
   function displayMovies() {
-    moviesCollection.get()
-      .then(function (querySnapshot) {
-        let movies = [];
-        querySnapshot.forEach(function (doc) {
-          let movie = doc.data();
-          movies.push(movie);
-        });
+    database.ref("movies").orderByChild("rating").once("value").then(function (snapshot) {
+      var movies = [];
+      snapshot.forEach(function (childSnapshot) {
+        var movie = childSnapshot.val();
+        movies.push(movie);
+      });
 
-        // Sort the movies by rating in descending order
-        movies.sort(function (a, b) {
-          return b.rating - a.rating;
-        });
+      // Sort the movies by rating in descending order
+      movies.sort(function (a, b) {
+        return b.rating - a.rating;
+      });
 
-        let moviesList = $("#moviesList");
-        moviesList.empty();
-        for (let i = 0; i < movies.length; i++) {
-          let movie = movies[i];
-          let ratingInput = $("<input>").attr({
-            type: "range",
-            min: 0,
-            max: 10,
-            step: 0.5,
-            value: movie.rating,
-            class: "ratingInput",
-            "data-movie-id": movie.id,
-          });
-          let ratingDiv = $("<div>")
-            .addClass("rating")
-            .append(ratingInput)
-            .append($("<span>").addClass("ratingValue").text(movie.rating));
-          let commentForm = $("<form>")
-            .addClass("commentForm")
-            .attr("data-movie-id", movie.id);
-          let commentInput = $("<input>").attr({
-            type: "text",
-            class: "form-control commentInput",
-            placeholder: "Add a comment",
-          });
-          let commentBtn = $("<button>")
-            .attr("type", "submit")
-            .addClass("btn btn-primary")
-            .text("Submit");
-          commentForm.append(commentInput).append(commentBtn);
-          let commentsList = $("<ul>").addClass("commentsList");
-          for (let j = 0; j < movie.comments.length; j++) {
-            let comment = $("<li>").addClass("comment").text(movie.comments[j]);
+      var moviesList = $("#moviesList");
+      moviesList.empty();
+      for (var i = 0; i < movies.length; i++) {
+        var movie = movies[i];
+        var ratingInput = $("<input>").attr({
+          type: "range",
+          min: 0,
+          max: 10,
+          step: 0.5,
+          value: movie.rating,
+          class: "ratingInput",
+          "data-movie-id": movie.id,
+        });
+        var ratingDiv = $("<div>")
+          .addClass("rating")
+          .append(ratingInput)
+          .append($("<span>").addClass("ratingValue").text(movie.rating));
+        var commentForm = $("<form>")
+          .addClass("commentForm")
+          .attr("data-movie-id", movie.id);
+        var commentInput = $("<input>").attr({
+          type: "text",
+          class: "form-control commentInput",
+          placeholder: "Add a comment",
+        });
+        var commentBtn = $("<button>")
+          .attr("type", "submit")
+          .addClass("btn btn-primary")
+          .text("Submit");
+        commentForm.append(commentInput).append(commentBtn);
+        var commentsList = $("<ul>").addClass("commentsList");
+        if (movie.comments) {
+          for (var j = 0; j < movie.comments.length; j++) {
+            var comment = $("<li>").text(movie.comments[j]);
             commentsList.append(comment);
           }
-          let movieDiv = $("<div>")
-            .addClass("movie")
-            .attr("data-movie-id", movie.id);
-          let poster = $("<img>")
-            .addClass("poster")
-            .attr("src", movie.posterUrl);
-          let title = $("<h3>").addClass("title").text(movie.title);
-          let summary = $("<p>").addClass("summary").text(movie.summary);
-          let user = $("<p>")
-            .addClass("user")
-            .text("Suggested by " + movie.user);
-          movieDiv
-            .append(poster)
-            .append(
-              $("<div>").addClass("details").append(title).append(summary).append(user).append(ratingDiv).append(commentForm).append(commentsList)
-            );
-          moviesList.append(movieDiv);
         }
-      })
-      .catch(function (error) {
-        console.error("Error retrieving movies: ", error);
-      });
+        var movieDiv = $("<div>").addClass("movie");
+        var posterImg = $("<img>")
+          .addClass("poster")
+          .attr("src", movie.poster)
+          .attr("alt", movie.title);
+        var titleDiv = $("<div>")
+          .addClass("title")
+          .text(movie.title);
+        var summaryDiv = $("<div>")
+          .addClass("summary")
+          .text(movie.summary);
+        var userDiv = $("<div>")
+          .addClass("user")
+          .text("Suggested by: " + movie.user);
+        movieDiv.append(posterImg);
+        movieDiv.append(titleDiv);
+        movieDiv.append(summaryDiv);
+        movieDiv.append(userDiv);
+        movieDiv.append(ratingDiv);
+        movieDiv.append(commentForm);
+        movieDiv.append(commentsList);
+        moviesList.append(movieDiv);
+      }
+    });
   }
 
-  // Code to save the suggested movie to the database
+  // Code to save a movie to the database
   function saveMovie(title, rating, user) {
-    let movieInfo = {
+    var id = Date.now();
+    var movie = {
+      id: id,
       title: title,
       rating: rating,
       user: user,
+      comments: [],
+      poster: "",
       summary: "",
-      posterUrl: "",
-      comments: []
     };
+    database.ref("movies/" + id).set(movie);
+    fetchMovieDetails(title, id);
+  }
 
+  // Code to fetch additional movie details (poster and summary) from the OMDb API
+  function fetchMovieDetails(title, id) {
+    var apiUrl =
+      "https://www.omdbapi.com/?apikey=YOUR_API_KEY&type=movie&t=" + title;
     $.ajax({
-      url: "https://www.omdbapi.com/",
-      data: { t: title, apikey: "368967f2" },
-      success: function (response) {
-        if (response.Response == "True") {
-          movieInfo.summary = response.Plot;
-          movieInfo.posterUrl = response.Poster;
-        }
-        saveMovieSuggestion(movieInfo);
-      },
-      error: function () {
-        saveMovieSuggestion(movieInfo);
-      },
+      url: apiUrl,
+      method: "GET",
+    }).then(function (response) {
+      if (response.Response === "True") {
+        var movie = {
+          id: id,
+          title: response.Title,
+          rating: 5,
+          user: "",
+          comments: [],
+          poster: response.Poster,
+          summary: response.Plot,
+        };
+        database.ref("movies/" + id).set(movie);
+      }
     });
   }
 
-  function saveMovieSuggestion(movieInfo) {
-    moviesCollection.add(movieInfo)
-      .then(function (docRef) {
-        console.log("Movie suggestion added with ID: ", docRef.id);
-      })
-      .catch(function (error) {
-        console.error("Error adding movie suggestion: ", error);
-      });
-  }
+  // Code to handle the movie rating input change
+  $(document).on("input", ".ratingInput", function () {
+    var rating = $(this).val();
+    var id = $(this).data("movie-id");
+    updateMovieRating(id, rating);
+  });
 
-  function updateMovieRating(movieId, rating) {
-    moviesCollection.doc(movieId).update({ rating: rating })
-      .then(function () {
-        console.log("Movie rating updated successfully");
-      })
-      .catch(function (error) {
-        console.error("Error updating movie rating: ", error);
-      });
-  }
+  // Code to handle the movie comment form submission
+  $(document).on("submit", ".commentForm", function (event) {
+    event.preventDefault();
+    var comment = $(this).find(".commentInput").val();
+    var id = $(this).data("movie-id");
+    addMovieComment(id, comment);
+    $(this).find(".commentInput").val("");
+  });
 
-  function saveMovieComment(movieId, comment) {
-    moviesCollection.doc(movieId).update({
-        comments: firebase.firestore.FieldValue.arrayUnion(comment)
-      })
-      .then(function () {
-        console.log("Movie comment added successfully");
-      })
-      .catch(function (error) {
-        console.error("Error adding movie comment: ", error);
-      });
-  }
-});
-
-
-// Code to handle sign-in with phone number
-function signInWithPhoneNumber(phoneNumber) {
-  var phoneNumber = "+1" + phoneNumber; // Modify this according to your phone number format
-  var appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-
-  firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
-    .then(function (confirmationResult) {
-      var verificationCode = window.prompt('Please enter the verification code that was sent to your phone:');
-      return confirmationResult.confirm(verificationCode);
-    })
-    .then(function (result) {
-      // User signed in successfully with phone number
-      var user = result.user;
-      // Do something with the signed-in user
-    })
-    .catch(function (error) {
-      // Handle sign-in errors
-      console.error("Error signing in with phone number: ", error);
+  // Code to update the rating of a movie in the database
+  function updateMovieRating(id, rating) {
+    database.ref("movies/" + id).update({
+      rating: rating,
     });
-}
-
-// Code to handle sign-in with Google (Gmail) account
-function signInWithGoogle() {
-  var provider = new firebase.auth.GoogleAuthProvider();
-
-  firebase.auth().signInWithPopup(provider)
-    .then(function (result) {
-      // User signed in successfully with Google account
-      var user = result.user;
-      // Do something with the signed-in user
-    })
-    .catch(function (error) {
-      // Handle sign-in errors
-      console.error("Error signing in with Google account: ", error);
-    });
-}
-
-
-
-// Code to handle phone sign-in button click
-$("#phoneSignInBtn").click(function (event) {
-  event.preventDefault();
-  var phoneNumber = $("#phoneNumberInput").val();
-  if (phoneNumber) {
-    signInWithPhoneNumber(phoneNumber);
   }
-});
 
-// Code to handle Google sign-in button click
-$("#googleSignInBtn").click(function (event) {
-  event.preventDefault();
-  signInWithGoogle();
+  // Code to add a comment to a movie in the database
+  function addMovieComment(id, comment) {
+    database.ref("movies/" + id + "/comments").push(comment);
+  }
 });
