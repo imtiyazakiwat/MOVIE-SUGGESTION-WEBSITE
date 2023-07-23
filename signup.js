@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const user = userCredential.user;
           console.log('User signed up successfully:', user.email); // Print the success message
           // Redirect to the home page or wherever you want to navigate after signup
+          window.location.href = 'index.html'; // Redirect to index.html
         })
         .catch((error) => {
           const errorCode = error.code;
